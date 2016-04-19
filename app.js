@@ -9,7 +9,7 @@ var routes = require('./routes/index');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
-var users={Mary:{id:1,username:"Mary",password:777888},John:{id:2,username:"John",password:888777}};
+var users= {Mary:{id:1,username:"Mary",password:777888},John:{id:2,username:"John",password:888777}};
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
