@@ -1,18 +1,26 @@
-var express = require('express');
-var router = express.Router();
-var passport = require('passport');
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-router.get('/login', function(req, res, next) {
-  res.render('login', {});
-});
+function isLoggedIn(req, res, next) {
 
-router.post('/login',
-  passport.authenticate('local', {session:false}),
-   function(req, res) {
-    res.json({ id: req.user.id, username: req.user.username });
-  }
-);
-module.exports = router;
+    // if user is authenticated in the session, carry on 
+    if (!req.isAuthenticated()){
+		 res.redirect('/');
+	}else{
+		 next();
+	}
+    // if they aren't redirect them to the home page
+   
+}
+
+module.exports = function(app,passport){
+	app.get('/pannel',isLoggedIn, function(req, res) {
+	res.render('pannel.ejs', { title: 'Express' });
+	});
+	app.get('/', function(req, res) {
+		res.render('index.ejs', {message:req.flash("errorMsg")});
+	});
+	
+	app.post('/',
+		passport.authenticate('local', { successRedirect: '/pannel',
+										failureRedirect: '/',
+										failureFlash: true })
+	);	
+}
