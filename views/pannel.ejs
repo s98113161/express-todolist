@@ -5,6 +5,7 @@
     <title>Bare - Start Bootstrap Template</title>
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
     <!-- Custom CSS -->
     <style>
     body {
@@ -32,16 +33,14 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li>
-                        <a href="#">About</a>
-                    </li>
-                    <li>
-                        <a href="#">Services</a>
-                    </li>
-                    <li>
-                        <a href="#">Contact</a>
-                    </li>
-                </ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Contact</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="logout"><i class="fa fa-sign-out" aria-hidden="true"></i></span>Logout</a></li>
+				</ul>
+               
             </div>
             <!-- /.navbar-collapse -->
         </div>
@@ -56,10 +55,20 @@
                 <h1>A Bootstrap Starter Template</h1>
                 <p class="lead">Complete with pre-defined file paths that you won't have to change!</p>
                 <ul class="list-unstyled">
-                  
+              
                 </ul>
             </div>
         </div>
+		<div class="row">
+		<div class="col-lg-12 text-center">
+			<form action="/api/schedule" method="post" role="form">
+			  <div class="form-group col-xs-6 col-lg-offset-3">
+				<input type="text" class="form-control" name="inputSchedule" placeholder="待辦事項">
+			  </div>
+			 
+			</form>	
+		</div>
+		</div>
         <!-- /.row -->
 
     </div>
