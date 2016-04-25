@@ -20,7 +20,7 @@ module.exports = function(app,passport){
 		}
 	});
 	app.post('/',
-		passport.authenticate('local', { successRedirect: '/pannel',
+		passport.authenticate('local', { successRedirect: '/user/pannel',
 										 failureRedirect: '/',
 										 failureFlash: true })
 	);
@@ -28,8 +28,12 @@ module.exports = function(app,passport){
 		req.logout();
 		res.redirect('/');
 	});	
-	app.get('/pannel',isLoggedIn, function(req, res) {
+	app.get('/user/pannel',isLoggedIn, function(req, res) {
+
 		res.render('pannel.ejs', {});
+	});
+	app.get('/user/another',isLoggedIn, function(req, res) {
+		res.render('another.ejs', {});
 	});
 	
 }
