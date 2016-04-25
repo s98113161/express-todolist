@@ -1,42 +1,100 @@
 var users= [{id:1,username:"Mary",password:777888},{id:2,username:"John",password:888777}];
+var User= require('../models/user.js');
 var LocalStrategy = require('passport-local').Strategy;
 
 
 module.exports=function(passport){
-	// used to serialize the user
-	passport.serializeUser(function(user, done) {
-		console.log("serializeUser:"+user);
-        done(null, user);
+    // =========================================================================
+    // passport session setup ==================================================
+    // =========================================================================
+    // required for persistent login sessions
+    // passport needs ability to serialize and unserialize users out of session
+
+    // used to serialize the user for the session
+    passport.serializeUser(function(user, done) {
+		console.log(user); 
+        done(null, user.id); //其實是在資料庫內的object.id
     });
 
     // used to deserialize the user
-    passport.deserializeUser(function(user, done) {
-		console.log("deserializeUser"+user);
-        done(null, user);
-        
+    passport.deserializeUser(function(id, done) {
+        User.findById(id, function(err, user) {
+            done(err, user);
+        });
     });
-	passport.use('local',new LocalStrategy({
+	//登入
+	passport.use('local-login',new LocalStrategy({
 	usernameField : 'account',
     passwordField : 'password',
 	passReqToCallback : true
 	},
-	function(req,username, password, done) {
-		var user;
-		//檢查使用者輸入的username有沒有存在users這個array，有的話就放進user變數。
-		for(i=0;i<users.length;i++){
-			if(users[i].username==username){
-			user=users[i];
-			}
-		}
-		if(user==null){
-			console.log("Incorrect username.");
-			return done(null, false,{message:req.flash("errorMsg","Incorrect username.")});
-		}
-		if (user.password!=password) {
-			console.log("Incorrect password.");
-			return done(null, false, {message:req.flash("errorMsg","Incorrect password.")});
-		}
-		return done(null, user);
-	}
+	function(req,account, password, done) { // callback with account and password from our form
+	process.nextTick(function() {
+        // find a user whose account is the same as the forms account
+        // we are checking to see if the user trying to login already exists
+        User.findOne({ 'local.account' :  account }, function(err, user) {
+			console.log(user);
+            // if there are any errors, return the error before anything else
+            if (err)
+                return done(err);
+
+            // if no user is found, return the message
+            if (!user)
+                return done(null, false, req.flash('errorMsg', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+
+            // if the user is found but the password is wrong
+            if (user.local.password!=password)
+                return done(null, false, req.flash('errorMsg', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+
+            // all is well, return successful user
+            return done(null, user);
+        });
+
+    })}
 	));
+	
+		//註冊
+	    passport.use('local-signup', new LocalStrategy({
+        // by default, local strategy uses username and password, we will override with account
+        usernameField : 'account',
+        passwordField : 'password',
+        passReqToCallback : true // allows us to pass back the entire request to the callback
+    },
+    function(req, account, password, done) {
+
+        process.nextTick(function() {
+
+        // find a user whose account is the same as the forms account
+        // we are checking to see if the user trying to login already exists
+        User.findOne({ 'local.account' :  account }, function(err, user) {
+            // if there are any errors, return the error
+            if (err)
+                return done(err);
+
+            // check to see if theres already a user with that account
+            if (user) {
+                return done(null, false, req.flash('errorMsg', 'That account is already taken.'));
+            } else {
+
+                // if there is no user with that account
+                // create the user
+                var newUser  = new User();
+
+                // set the user's local credentials
+                newUser.local.account    = account;
+                newUser.local.password = password;
+
+                // save the user
+                newUser.save(function(err) {
+                    if (err)
+                        throw err;
+                    return done(null, newUser);
+                });
+            }
+
+        });    
+
+        });
+
+    }));
 }
