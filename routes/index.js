@@ -1,3 +1,5 @@
+var Schedule= require('../models/schedule.js');
+var moment = require('moment');
 function isLoggedIn(req, res, next) {
 	// if they aren't redirect them to the home page
     if (!req.isAuthenticated()){
@@ -40,12 +42,32 @@ module.exports = function(app,passport){
 	});	
 	//	-------主頁面-------
 	app.get('/user/pannel',isLoggedIn, function(req, res) {
-
-		res.render('pannel.ejs', {});
+		Schedule.find({user_account_id:req.user.id}, function(err, schedules) {
+		if (err) throw err;
+		else{
+			
+			for(i=0;i<schedules.length;i++){
+				var temp;
+				
+				console.log(schedules[i].createdAt);
+				temp = schedules[i].createdAt;
+				schedules[i].createdAt=undefined;
+				schedules[i].createdAt = new Date(temp).toLocaleString();
+				console.log(schedules[i].createdAt);
+			}
+				res.status('200');
+				res.render('pannel.ejs', {schedules:schedules});
+			}
+		});
+		
 	});
 	//	-------Test-------
 	app.get('/user/another',isLoggedIn, function(req, res) {
-		res.render('another.ejs', {});
+		res.send(moment().format('MMMM Do YYYY, h:mm:ss a'));
+		var date = moment();
+		res.send(date.toISOString());
+		//date.toISOString(); // or format() - see below
+		//res.render('another.ejs', {});
 	});
 	
 }

@@ -49,4 +49,3 @@ app.use(function(err, req, res, next) {
 var port = process.env.PORT || '8888';
 app.listen(port);
 console.log('The server is create on port ' + port);
-module.exports = app;

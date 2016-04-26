@@ -13,10 +13,6 @@
         <div class="row">
             <div class="col-lg-12 text-center">
                 <h1>List your schedule below.</h1>
-            
-                <ul class="list-unstyled">
-              
-                </ul>
             </div>
         </div>
 		<div class="row">
@@ -24,19 +20,37 @@
 			<form action="/api/schedule" method="post" role="form">
 			  <div class="form-group col-xs-6 col-lg-offset-3">
 				<input type="text" class="form-control" name="inputSchedule" placeholder="待辦事項">
-			  </div>
-			 
+			  </div> 
 			</form>	
 		</div>
-		<a href="/user/another"> click</a>
 		</div>
         <!-- /.row -->
 
+		<div class="row">
+				<div class="col-lg-12">       
+                <table class="table">
+				<thead>
+			    <tr>
+				<th>新增日期</th>
+				<th>待辦內容</th>
+				<th>操作</th>
+				</tr>
+				</thead>
+				<tbody>
+				<% schedules.forEach(function(schedule) { %>
+					<tr>
+					<td  class="col-md-4"><%= schedule.createdAt %> </td>
+					<td	 class="col-md-6" ><%= schedule.body %></td>
+					<td	 class="col-md-2">
+					<div><a href="/">刪除</a></div>
+					<div><a href="/">修改</a></div>
+					</td>
+					</tr>
+				<% }); %>
+				<tbody>
+			</div>
+		</div>
     </div>
-    <!-- /.container -->
-
-
-
 </body>
 
 </html>
