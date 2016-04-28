@@ -35,7 +35,6 @@ module.exports = function(app){
 		
 		
 	});
-	
 	//取得所有的sechedule
 	app.get('/api/schedule',isLoggedIn, function(req, res) {
 		Schedule.find({user_account_id:req.user.id}, function(err, schedules) {
