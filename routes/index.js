@@ -11,7 +11,18 @@ function isLoggedIn(req, res, next) {
     
    
 }
-
+//
+function transferIsoToLocale(schedules){
+	var temp = JSON.parse(JSON.stringify(schedules)); //
+	for(i=0;i<schedules.length;i++){
+		//先將ISO Date轉換成Full Date,在format成LocaleString
+		//2016-04-28T02:43:39.556Z →  Thu Apr 28 2016 10:43:39 GMT+0800 (台北標準時間) ->  2016-04-28 10:43:39
+				temp[i].createdAt = new Date(schedules[i].createdAt).toLocaleString();
+				temp[i].updatedAt = new Date(schedules[i].updatedAt).toLocaleString();
+			}
+return temp;
+	
+}
 module.exports = function(app,passport){
 	//	-------登入-------
 	app.get('/', function(req, res) {
@@ -46,17 +57,11 @@ module.exports = function(app,passport){
 		if (err) throw err;
 		else{
 			
-			for(i=0;i<schedules.length;i++){
-				var temp;
-				
-				console.log(schedules[i].createdAt);
-				temp = schedules[i].createdAt;
-				schedules[i].createdAt=undefined;
-				schedules[i].createdAt = new Date(temp).toLocaleString();
-				console.log(schedules[i].createdAt);
-			}
+				console.log(schedules);
+				//console.log(transferISODate(schedules));
+
 				res.status('200');
-				res.render('pannel.ejs', {schedules:schedules});
+				res.render('pannel.ejs', {schedules:transferIsoToLocale(schedules)});
 			}
 		});
 		

@@ -8,12 +8,13 @@ var flash = require('connect-flash');
 var session = require('express-session');
 var passport = require('passport');
 var mongoose = require('mongoose');
+var methodOverride = require('method-override')
+
 var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 mongoose.connect('mongodb://kangyozia:123456@ds019491.mlab.com:19491/my-express-todolist');
-//require("./dosome.js")(mongoose);
 require("./config/passport.js")(passport);
 
 // uncomment after placing your favicon in /public
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public'))); //path:處理linux 與 windows 路徑不同問題(/,\)
+app.use(methodOverride('_method')) //讓http支援 delete,put ，覆寫form post method,/exmaple/123?_method=DELETE。
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
